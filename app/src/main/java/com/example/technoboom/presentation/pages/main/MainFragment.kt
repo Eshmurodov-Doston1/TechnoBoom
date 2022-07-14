@@ -124,10 +124,12 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
                       val resUpload = gson.fromJson(responseBody?.string().toString(), ResUpload::class.java)
                       if (resUpload!=null && resUpload.Success){
                           appCompositionRoot.deleteDialog(1){
-                              launch {
-                                  authVm.sharedPreference.clear()
-                                  authVm.deleteAllDataTableImage()
-                                  mainViewCreated()
+                              if (it){
+                                  launch {
+                                      authVm.sharedPreference.clear()
+                                      authVm.deleteAllDataTableImage()
+                                      mainViewCreated()
+                                  }
                               }
                           }
                       }
@@ -166,11 +168,13 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
 
             clearCard.setOnClickListener {
                 appCompositionRoot.deleteDialog(2){
-                    launch {
-                        authVm.sharedPreference.clear()
-                        authVm.deleteAllDataTableImage()
-                        mainViewCreated()
-                    }     
+                    if (it) {
+                        launch {
+                            authVm.sharedPreference.clear()
+                            authVm.deleteAllDataTableImage()
+                            mainViewCreated()
+                        }
+                    }
                 }
             }
 
