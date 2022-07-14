@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">TechnoBoom</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="again">Повторить попытку</string>
+    <string name="error_server">Xatolik ro\'y berdi iltimos birozdan so\'ng urunib ko\'ring</string>
+    <string name="no_internet">Internetga ulanish mavjud emas</string>
+    <string name="order_number">Порядковый номер</string>
+    <string name="pinfl">Пинфл</string>
+    <string name="save">Сохранять</string>
+    <string name="send">Отправить</string>
+    <string name="error_input">Обнаружена ошибка</string>
+    <string name="empty_pinfl_or_order_number">Пинфл или заказ недоступны</string>
+    <string name="no_help">Пожалуйста, разрешите, иначе мы не сможем вам помочь</string>
+    <string name="cancel">Отмена</string>
+    <string name="gallery">Галерея</string>
+    <string name="camera">Камера</string>
+    <string name="loading">Загрузка...</string>
+    <string name="delete">Удалить</string>
+    <string name="delete_text">Вы уверены, что хотите удалить эту информацию?</string>
+    <string name="update_text">Вы действительно хотите изменить эту информацию?</string>
+    <string name="update">Изменять</string>
+    <string name="other">Бошкалар</string>
+    <string name="signature">Имзо наъмунаси</string>
+    <string name="product">Товар</string>
+    <string name="treaty">Договор</string>
+    <string name="selfie">Селфи</string>
+    <string name="card">Пластик карта</string>
+    <string name="passport">Паспорт</string>
+    <string name="delete_data">Удалите</string>
+    <string name="server_error">Есть проблема с сервером</string>
+    <string name="delete_all_data">Позволить данным летать?</string>
+</resources>
