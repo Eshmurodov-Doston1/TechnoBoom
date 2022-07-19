@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.util.Base64
 import android.util.Base64OutputStream
+import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.viewbinding.library.fragment.viewBinding
@@ -21,6 +22,7 @@ import com.example.technoboom.dataBase.entity.ImageEntity
 import com.example.technoboom.databinding.FragmentMainBinding
 import com.example.technoboom.models.AuthData
 import com.example.technoboom.models.Data
+import com.example.technoboom.models.files.SendData
 import com.example.technoboom.models.resPonseUpload.ResUpload
 import com.example.technoboom.presentation.pages.basePage.BaseFragment
 import com.example.technoboom.utils.*
@@ -30,14 +32,13 @@ import com.example.technoboom.utils.AppConstant.GALLERY_POS
 import com.example.technoboom.utils.AppConstant.IMAGE_FORMAT
 import com.example.technoboom.vm.AuthVm
 import com.google.gson.Gson
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 
-@AndroidEntryPoint
 class MainFragment : BaseFragment(R.layout.fragment_main) {
     private val binding:FragmentMainBinding by viewBinding()
     private lateinit var listData:ArrayList<Data>
@@ -47,12 +48,12 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
     private lateinit var imagePath:String
     private lateinit var imageAdapter: ImageAdapter
     private lateinit var gson: Gson
-    private val imageData get() = authVm.sharedPreference.imageData
     private val sharedPreference get() = authVm.sharedPreference
     private var isUpdate = false
     private var imageEntity:ImageEntity? = null
     private var updatePosition:Int = -1
     private var categoryText:String?=null
+    private lateinit var listDataRv:ArrayList<com.example.technoboom.models.files.Data>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         listData = ArrayList()
@@ -63,55 +64,17 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
            mainViewCreated()
-
             dataBaseDataEmptyOrNull()
-
             pinfl.doAfterTextChanged {
                 if (it.toString().isNotNullOrEmpty()){
                     buttonSave.enabledTrue()
                 }
             }
 
-            if (authVm.sharedPreference.imageData.isNotNullOrEmpty()){
-                authVm.sharedPreference.imageData
-            }
 
 
 
 
-            imageAdapter = ImageAdapter(object:ImageAdapter.OnItemClickListener{
-                override fun onItemClick(uri: ImageEntity, position: Int) {
-
-                }
-
-                override fun onItemClickDelete(uri: ImageEntity, position: Int) {
-                        appCompositionRoot.deleteDialog(0){
-                            if (it){
-                                launch {
-                                    authVm.deleteImageEntity(imageEntity = uri)
-                                    imageAdapter.notifyDataSetChanged()
-                                }
-                                dataBaseDataEmptyOrNull()
-                            }
-                        }
-                }
-
-                override fun onItemClickUpdate(uri: ImageEntity, position: Int) {
-                    appCompositionRoot.updateDialog {
-                        if (it){
-                            isUpdate = true
-                            imageEntity = uri
-                            updatePosition = position
-                            uploadDataPermission()
-                        }
-                    }
-                }
-            })
-
-
-            authVm.getAllImageEntity().observe(appCompositionRoot.mLifecycleOwner){ list->
-                imageAdapter.submitList(list)
-            }
 
             sendButton.setOnClickListener {
                 authVm.getAllList().forEach {
@@ -123,14 +86,10 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
                   authVm.authResponse.fetchResult(appCompositionRoot.uiControllerApp){ responseBody ->
                       val resUpload = gson.fromJson(responseBody?.string().toString(), ResUpload::class.java)
                       if (resUpload!=null && resUpload.Success){
-                          appCompositionRoot.deleteDialog(1){
-                              if (it){
-                                  launch {
-                                      authVm.sharedPreference.clear()
-                                      authVm.deleteAllDataTableImage()
-                                      mainViewCreated()
-                                  }
-                              }
+                          launch {
+                              authVm.deleteAllDataTableImage()
+                              mainViewCreated()
+                              clearMyFiles()
                           }
                       }
                   }
@@ -147,6 +106,7 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
                         val loadAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.anim_view)
                         coordinator.visible()
                         coordinator.animation = loadAnimation
+                        getFiles()
                     }
                 }else{
                     appCompositionRoot.errorDialog(
@@ -162,7 +122,7 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
                 isUpdate = false
                 uploadDataPermission()
             }
-            rv.adapter = imageAdapter
+
 
 
 
@@ -172,6 +132,7 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
                         launch {
                             authVm.sharedPreference.clear()
                             authVm.deleteAllDataTableImage()
+                            clearMyFiles()
                             mainViewCreated()
                         }
                     }
@@ -184,14 +145,55 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
 
     private fun mainViewCreated() {
         binding.apply {
-            if (authVm.sharedPreference.orderNumber.isNotNullOrEmpty()){
-                coordinator.visible()
-                linear.gone()
-            }else{
-                coordinator.gone()
-                linear.visible()
-            }
+                if (authVm.sharedPreference.orderNumber.isNotNullOrEmpty()){
+                    getFiles()
+                    coordinator.visible()
+                    linear.gone()
+                }else{
+                    coordinator.gone()
+                    linear.visible()
+                }
         }
+    }
+
+
+    fun getFiles(){
+        listDataRv = ArrayList()
+            binding.apply {
+                launch {
+                    val pinfl = authVm.sharedPreference.pinfl.toString()
+                    val orderNumber = authVm.sharedPreference.orderNumber.toString()
+                        authVm.getFiles(SendData(pinfl,orderNumber))
+                        authVm.files.fetchResult(appCompositionRoot.uiControllerApp){ result->
+                            listDataRv = result?.Data as ArrayList<com.example.technoboom.models.files.Data>
+                            imageAdapter = ImageAdapter(listDataRv,object:ImageAdapter.OnItemClickListener{
+                                override fun onItemClick(data: com.example.technoboom.models.files.Data, position: Int) {
+
+                                }
+                            })
+                            imageAdapter.listData = listDataRv
+                            rv.adapter = imageAdapter
+                        }
+                }
+
+                authVm.getAllImageEntity().observe(appCompositionRoot.mLifecycleOwner){
+                    if (it.isNotEmpty()){
+                        it.onEach {
+                            listDataRv.add(com.example.technoboom.models.files.Data(
+                                convertImageFileToBase64(File(it.imagePath)),
+                                it.imagePath.substring(it.imagePath.length-3),
+                                it.categoryImage, isSend = false))
+                            imageAdapter.notifyDataSetChanged()
+                        }
+                    }
+                }
+
+
+
+
+
+
+            }
     }
 
 
@@ -292,7 +294,6 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
 
     fun convertImageFileToBase64(imageFile: File): String {
         return ByteArrayOutputStream().use { outputStream ->
-
             Base64OutputStream(outputStream, Base64.DEFAULT).use { base64FilterStream ->
                 imageFile.inputStream().use { inputStream ->
                     inputStream.copyTo(base64FilterStream)
@@ -302,4 +303,15 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        clearMyFiles()
+    }
+
+    fun clearMyFiles() {
+        val files = activity?.filesDir?.listFiles()
+        if (files != null) for (file in files) {
+            file.delete()
+        }
+    }
 }

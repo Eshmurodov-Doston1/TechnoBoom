@@ -29,9 +29,9 @@ interface ResponseFetcher {
                     ResponseState.Error(e.hashCode(), e.message)
                 } catch (e: HttpException) {
                     ResponseState.Error(e.code(), errorMessage(e.response()))
-                } catch (e: Exception) {
+                } catch (e:IllegalArgumentException){
                     ResponseState.Error(e.hashCode(), e.message)
-                }catch (e:IllegalArgumentException){
+                } catch (e: Exception) {
                     ResponseState.Error(e.hashCode(), e.message)
                 }
                 emit(flow)

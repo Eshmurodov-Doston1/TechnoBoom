@@ -33,16 +33,8 @@ class NetworkModule {
     fun provideOkHttpClient(): OkHttpClient {
 
        var okHttpClient = OkHttpClient.Builder()
-            .connectTimeout(10000, TimeUnit.MILLISECONDS)
-            .readTimeout(10000, TimeUnit.MILLISECONDS)
-//            .authenticator(object : Authenticator {
-//                override fun authenticate(route: Route?, response: Response): Request? {
-//                    if (response.request.header(HttpHeaders.AUTHORIZATION) != null
-//                    ) return null //if you've tried to authorize and failed, give up
-//                    val credential = Credentials.basic("Тест", "")
-//                    return response.request.newBuilder().header(HttpHeaders.AUTHORIZATION, credential).build()
-//                }
-//            })
+            .connectTimeout(10000, TimeUnit.SECONDS)
+            .readTimeout(10000, TimeUnit.SECONDS)
 
 
         return okHttpClient.build()
@@ -55,7 +47,6 @@ class NetworkModule {
             .baseUrl(baseUrl)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
-
             .build()
     }
 
