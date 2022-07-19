@@ -29,7 +29,7 @@ class AppCompositionRoot(
     val mContext: Context get() = activity
     val mNavController: NavController get() = navController
     val screenNavigator:ScreenNavigator by lazy {
-        ScreenNavigator(navController)
+        ScreenNavigator(mNavController)
     }
     val uiControllerApp get() = uiController
 
@@ -74,4 +74,6 @@ class AppCompositionRoot(
                 }
             }
     }
+
+
 }

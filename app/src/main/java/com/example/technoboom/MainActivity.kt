@@ -2,6 +2,7 @@ package com.example.technoboom
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.viewbinding.library.activity.viewBinding
 import androidx.core.content.ContextCompat
@@ -15,11 +16,13 @@ import dagger.hilt.android.HiltAndroidApp
 class MainActivity : AppCompatActivity(),UiController {
     private val binding:ActivityMainBinding by viewBinding()
     lateinit var appCompositionRoot:AppCompositionRoot
+    private val navController by lazy {
+        (supportFragmentManager.findFragmentById(R.id.fragment_main_app) as NavHostFragment).navController
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        var navController = supportFragmentManager.findFragmentById(R.id.fragment_main) as NavHostFragment
-        appCompositionRoot = AppCompositionRoot(this,this,navController.navController,this)
+        appCompositionRoot = AppCompositionRoot(this,this,navController,this)
         window.statusBarColor = ContextCompat.getColor(this,R.color.white)
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
     }
@@ -37,7 +40,7 @@ class MainActivity : AppCompatActivity(),UiController {
     }
 
     override fun onBackPressed() {
-        if (findNavController(R.id.fragment_main).currentDestination?.id==R.id.mainFragment){
+        if (findNavController(R.id.fragment_main_app).currentDestination?.id==R.id.mainFragment){
             super.onBackPressed()
             finish()
         }

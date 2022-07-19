@@ -176,7 +176,6 @@
                     app:lottie_autoPlay="true"
                     app:lottie_loop="true"
                     app:lottie_rawRes="@raw/upload_anim" />
-
                 <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/upload_btn"
                     android:layout_width="wrap_content"

@@ -1,42 +1,43 @@
 package com.example.technoboom.adapters
 
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.net.toUri
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.technoboom.dataBase.entity.ImageEntity
 import com.example.technoboom.databinding.RvRemoteItemBinding
+import com.example.technoboom.models.files.Data
+import com.example.technoboom.network.authService.ImageUtil
+import com.example.technoboom.utils.gone
+import com.example.technoboom.utils.visible
+import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
 
-class ImageAdapter(var onItemClickListener: OnItemClickListener):ListAdapter<ImageEntity,ImageAdapter.Vh>(MyDiffUtil()) {
+class ImageAdapter(var listData:ArrayList<Data>,var onItemClickListener: OnItemClickListener):RecyclerView.Adapter<ImageAdapter.Vh>(),CoroutineScope {
     inner class Vh(var rvRemoteItemBinding: RvRemoteItemBinding):RecyclerView.ViewHolder(rvRemoteItemBinding.root){
-        fun onBind(imageEntity:ImageEntity,position: Int){
+        fun onBind(data:Data,position: Int){
 
-            rvRemoteItemBinding.image.setImageURI(Uri.parse(imageEntity.imagePath))
+
+           launch(Dispatchers.IO + Job()) {
+               async {
+                   if (data.fileFormat.trim().lowercase() == "pdf".trim().lowercase()){
+                       rvRemoteItemBinding.image.gone()
+                       rvRemoteItemBinding.textPdf.visible()
+                   }else{
+                       ImageUtil.convert(data.file){image->
+                           launch(Dispatchers.Main + Job()) {
+                               rvRemoteItemBinding.image.setImageBitmap(image)
+                           }
+                       }
+                   }
+               }
+           }
+
+            if (data.isSend!=null && data.isSend==false){
+                rvRemoteItemBinding.noSend.visible()
+            }
             rvRemoteItemBinding.cardImage.setOnClickListener {
-                onItemClickListener.onItemClick(imageEntity,position)
-            }
-            rvRemoteItemBinding.cardDelete.setOnClickListener {
-                onItemClickListener.onItemClickDelete(imageEntity,position)
-            }
-
-            rvRemoteItemBinding.cardUpdate.setOnClickListener {
-                onItemClickListener.onItemClickUpdate(imageEntity,position)
+                onItemClickListener.onItemClick(data,position)
             }
         }
-    }
-
-    class MyDiffUtil :DiffUtil.ItemCallback<ImageEntity>(){
-        override fun areItemsTheSame(oldItem: ImageEntity, newItem: ImageEntity): Boolean {
-            return oldItem.equals(newItem)
-        }
-
-        override fun areContentsTheSame(oldItem: ImageEntity, newItem: ImageEntity): Boolean {
-            return oldItem.equals(newItem)
-        }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Vh {
@@ -44,11 +45,16 @@ class ImageAdapter(var onItemClickListener: OnItemClickListener):ListAdapter<Ima
     }
 
     override fun onBindViewHolder(holder: Vh, position: Int) {
-        holder.onBind(getItem(position),position)
+        holder.onBind(listData[position],position)
     }
     interface OnItemClickListener{
-        fun onItemClick(uri: ImageEntity,position: Int)
-        fun onItemClickDelete(uri: ImageEntity,position: Int)
-        fun onItemClickUpdate(uri: ImageEntity,position: Int)
+        fun onItemClick(uri: Data,position: Int)
     }
+
+    override fun getItemCount(): Int {
+        return listData.size
+    }
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main.immediate + Job()
 }

@@ -9,10 +9,12 @@ object AppConstant {
     const val ORDER_NUMBER = "OrderNumber"
     const val CAMERA_POS = 0
     const val GALLERY_POS = 1
+    const val FILE_POS = 2
     /** Date Formatter **/
     const val DATE_FORMAT = "yyyyMMdd_HHmmss"
     /** Image format **/
     const val IMAGE_FORMAT = ".jpg"
+    const val PDF_FORMAT = ".pdf"
     const val IMAGE_DATA = "imageData"
 
 }

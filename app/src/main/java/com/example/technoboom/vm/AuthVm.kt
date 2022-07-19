@@ -7,6 +7,8 @@ import com.example.technoboom.dataBase.entity.ImageEntity
 import com.example.technoboom.dataBase.entity.TokenBase64
 import com.example.technoboom.dataBase.imageDaoRepo.ImageDaoRepository
 import com.example.technoboom.models.AuthData
+import com.example.technoboom.models.files.ResData
+import com.example.technoboom.models.files.SendData
 import com.example.technoboom.network.authService.AuthRepository
 import com.example.technoboom.utils.AppConstant.NOCONNECTION
 import com.example.technoboom.utils.MySharedPreference
@@ -16,6 +18,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
 import java.io.IOException
@@ -35,6 +38,9 @@ class AuthVm @Inject constructor(
     val authResponse:StateFlow<ResponseState<ResponseBody?>> get() = _authResponse
     private var _authResponse = MutableStateFlow<ResponseState<ResponseBody?>>(ResponseState.Loading)
 
+
+    val files:StateFlow<ResponseState<ResData?>> get() = _files
+    private var _files = MutableStateFlow<ResponseState<ResData?>>(ResponseState.Loading)
 
     fun auth(authData: AuthData){
         viewModelScope.launch {
@@ -58,6 +64,25 @@ class AuthVm @Inject constructor(
             }
         }
     }
+
+
+
+    fun getFiles(sendData: SendData){
+        viewModelScope.launch {
+            if (networkHelper.isNetworkConnected()){
+                val credentials: String = "Тест" + ":"
+                val basic = "Basic " + Base64.getEncoder().encodeToString(credentials.toByteArray())
+                authRepository.getFiles(basic,sendData).collect{ response->
+                    _files.emit(response)
+                }
+            }else{
+                _files.emit(ResponseState.Error(NOCONNECTION))
+            }
+        }
+    }
+
+
+
 
     fun savePinflAndOrderNumber(pinfl:String,orderNumber:String):Boolean{
        return try {

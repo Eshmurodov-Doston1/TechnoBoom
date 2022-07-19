@@ -1,6 +1,8 @@
 package com.example.technoboom.utils
 
+import android.telephony.TelephonyManager
 import android.util.Log
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -9,7 +11,9 @@ import kotlinx.coroutines.flow.flowOn
 import org.json.JSONObject
 import retrofit2.HttpException
 import retrofit2.Response
+import retrofit2.Retrofit
 import java.io.IOException
+import java.util.concurrent.TimeoutException
 import javax.inject.Inject
 
 interface ResponseFetcher {
@@ -20,8 +24,7 @@ interface ResponseFetcher {
     class Base @Inject constructor() : ResponseFetcher{
         override fun <T> getFlowResponseState(response: Response<T>) =
             flow {
-                val flow = try {
-                    coroutineScope {
+                val flow = try { coroutineScope {
                         if (response.isSuccessful) ResponseState.Success(response.body())
                         else throw HttpException(response)
                     }
@@ -29,9 +32,12 @@ interface ResponseFetcher {
                     ResponseState.Error(e.hashCode(), e.message)
                 } catch (e: HttpException) {
                     ResponseState.Error(e.code(), errorMessage(e.response()))
-                } catch (e: Exception) {
+                } catch (e:IllegalArgumentException){
                     ResponseState.Error(e.hashCode(), e.message)
-                }catch (e:IllegalArgumentException){
+                }catch (e:TimeoutException){
+                    ResponseState.Error(e.hashCode(), e.message)
+                }
+                catch (e: Exception) {
                     ResponseState.Error(e.hashCode(), e.message)
                 }
                 emit(flow)
@@ -41,7 +47,6 @@ interface ResponseFetcher {
         override fun <T> errorMessage(response: Response<T>?): String {
             return try {
                 val jsonObject = JSONObject(response?.errorBody()?.string()!!)
-                Log.e("Method_errorMessage", jsonObject.toString())
                 return if (jsonObject.has("Еrror")) {
                     jsonObject.get("Еrror").toString()
                 } else {

@@ -24,18 +24,14 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@AndroidEntryPoint
 class AuthPageFragment : BaseFragment(R.layout.fragment_auth_page),UiController {
     private val binding:FragmentAuthPageBinding by viewBinding()
-    private val authVm:AuthVm by viewModels()
     private val appCompositionRoot get() = (activity as MainActivity).appCompositionRoot
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
 
-
             motionLayout.startLayoutAnimation()
-
 
             motionLayout.addTransitionListener(object:MotionLayout.TransitionListener{
                 override fun onTransitionStarted(
@@ -52,13 +48,12 @@ class AuthPageFragment : BaseFragment(R.layout.fragment_auth_page),UiController 
                     endId: Int,
                     progress: Float
                 ) {
-                    Handler(Looper.getMainLooper()).postDelayed({
-                      appCompositionRoot.screenNavigator.createMainScreen()
-                    },2000)
                 }
 
                 override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
-
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        appCompositionRoot.screenNavigator.createMainScreen()
+                    },2000)
                 }
 
                 override fun onTransitionTrigger(
@@ -72,12 +67,6 @@ class AuthPageFragment : BaseFragment(R.layout.fragment_auth_page),UiController 
 
             })
 
-           // authVm.auth()
-           launch {
-               authVm.authResponse.fetchResult(this@AuthPageFragment){
-                   Log.e("data", it?.string().toString())
-               }
-           }
         }
     }
 

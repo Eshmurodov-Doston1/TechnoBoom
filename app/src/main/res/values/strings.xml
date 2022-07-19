@@ -14,6 +14,7 @@
     <string name="no_help">Пожалуйста, разрешите, иначе мы не сможем вам помочь</string>
     <string name="cancel">Отмена</string>
     <string name="gallery">Галерея</string>
+    <string name="file">Файл</string>
     <string name="camera">Камера</string>
     <string name="loading">Загрузка...</string>
     <string name="delete">Удалить</string>

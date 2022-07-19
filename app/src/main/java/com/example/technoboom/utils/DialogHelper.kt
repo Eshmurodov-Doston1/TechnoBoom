@@ -17,6 +17,7 @@ import com.example.technoboom.databinding.DialogErrorBinding
 import com.example.technoboom.models.resPonseUpload.ResUpload
 import com.example.technoboom.utils.AppConstant.CAMERA_POS
 import com.example.technoboom.utils.AppConstant.EMPTY_STRING
+import com.example.technoboom.utils.AppConstant.FILE_POS
 import com.example.technoboom.utils.AppConstant.GALLERY_POS
 
 class DialogHelper(
@@ -117,12 +118,16 @@ class DialogHelper(
         val dialogCameraBinding = DialogCameraBinding.inflate(LayoutInflater.from(context), null, false)
         create.setView(dialogCameraBinding.root)
         dialogCameraBinding.passport.isChecked = true
-        dialogCameraBinding.camera.setOnClickListener {
+        dialogCameraBinding.consCamera.setOnClickListener {
             onClick.invoke(CAMERA_POS,getGroupText(dialogCameraBinding.radioGroup))
             create.dismiss()
         }
-        dialogCameraBinding.gallery.setOnClickListener {
+        dialogCameraBinding.consGallery.setOnClickListener {
             onClick.invoke(GALLERY_POS,getGroupText(dialogCameraBinding.radioGroup))
+            create.dismiss()
+        }
+        dialogCameraBinding.consPdf.setOnClickListener {
+            onClick.invoke(FILE_POS,getGroupText(dialogCameraBinding.radioGroup))
             create.dismiss()
         }
         dialogCameraBinding.close.setOnClickListener {
