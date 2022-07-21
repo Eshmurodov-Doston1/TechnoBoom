@@ -60,6 +60,13 @@ fun String?.isNotNullOrEmpty():Boolean{
     return this?.trim() != null && this.trim().isNotEmpty() && this.trim() != ""
 }
 
+fun View.enabledTrue(){
+    this.isEnabled = true
+}
+
+fun View.enabledFalse(){
+    this.isEnabled = false
+}
 
 fun View.visible(){
     this.isVisible = true

@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity(),UiController {
         binding.loading.gone()
     }
 
+
     override fun errors(message: String, code: Int) {
         appCompositionRoot.errorDialog(AppConstant.EMPTY_STRING, message, code){}
     }
@@ -43,6 +44,8 @@ class MainActivity : AppCompatActivity(),UiController {
         if (findNavController(R.id.fragment_main_app).currentDestination?.id==R.id.mainFragment){
             super.onBackPressed()
             finish()
+        }else{
+            findNavController(R.id.fragment_main_app).popBackStack()
         }
     }
 }

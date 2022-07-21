@@ -3,7 +3,6 @@ package com.example.technoboom.dataBase
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.example.technoboom.dataBase.dao.AuthDao
-import com.example.technoboom.dataBase.dao.BaseDao
 import com.example.technoboom.dataBase.dao.ImageDao
 import com.example.technoboom.dataBase.dao.TokenBase64Dao
 import com.example.technoboom.dataBase.entity.AuthEntity

@@ -16,5 +16,7 @@ object AppConstant {
     const val IMAGE_FORMAT = ".jpg"
     const val PDF_FORMAT = ".pdf"
     const val IMAGE_DATA = "imageData"
+    const val LOGIN = "login"
+    const val PASSWORD = "PASSWORD"
 
 }

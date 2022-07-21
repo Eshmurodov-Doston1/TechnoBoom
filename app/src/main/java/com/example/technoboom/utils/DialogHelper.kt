@@ -75,7 +75,7 @@ class DialogHelper(
 
                     }
                 }
-                in 421..499 -> {
+                in 402..499 -> {
                     tvTitleError.text = titleError
                     tvInfoError.text = infoError
                     imgContainer.setImageResource(R.drawable.ic_warning)

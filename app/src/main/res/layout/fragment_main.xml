@@ -5,82 +5,6 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".presentation.pages.main.MainFragment">
-    <LinearLayout
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:id="@+id/linear"
-        android:visibility="visible"
-        android:layout_marginTop="@dimen/_10sdp"
-        app:layout_constraintTop_toTopOf="parent"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:gravity="center"
-        android:layout_height="wrap_content">
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/animationLottie"
-            android:layout_width="@dimen/_80sdp"
-            android:layout_height="@dimen/_100sdp"
-            app:lottie_rawRes="@raw/input_json"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintWidth_percent="0.5"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintVertical_bias="0.2"
-            app:layout_constraintTop_toTopOf="parent"
-            app:lottie_autoPlay="true"
-            app:lottie_loop="true"/>
-        <EditText
-            android:layout_marginTop="@dimen/_8sdp"
-            android:id="@+id/order_number"
-            android:inputType="text"
-            android:textSize="@dimen/_12sdp"
-            android:textStyle="normal"
-            android:textColor="@color/black"
-            android:hint="@string/order_number"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintWidth_percent="0.95"
-            android:layout_marginHorizontal="@dimen/_10sdp"
-            android:background="@drawable/back_edite_text"
-            android:paddingVertical="@dimen/_7sdp"
-            android:paddingHorizontal="@dimen/_5sdp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-        <EditText
-            android:layout_marginTop="@dimen/_10sdp"
-            android:id="@+id/pinfl"
-            android:inputType="number"
-            android:textSize="@dimen/_12sdp"
-            android:textStyle="normal"
-            android:textColor="@color/black"
-            android:maxLength="14"
-            android:hint="@string/pinfl"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintWidth_percent="0.95"
-            android:layout_marginHorizontal="@dimen/_10sdp"
-            android:background="@drawable/back_edite_text"
-            android:paddingVertical="@dimen/_7sdp"
-            android:paddingHorizontal="@dimen/_5sdp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/buttonSave"
-            android:enabled="false"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textStyle="normal"
-            android:textSize="@dimen/_12sdp"
-            android:text="@string/save"
-            android:layout_marginHorizontal="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:background="@drawable/button_normal"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_33sdp"/>
-    </LinearLayout>
 
 
 <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -119,7 +43,7 @@
                 android:layout_height="match_parent">
 
                 <androidx.cardview.widget.CardView
-                    android:id="@+id/clear_card"
+                    android:id="@+id/settings_card"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:clickable="true"
@@ -128,7 +52,7 @@
                     app:cardCornerRadius="@dimen/_22sdp"
                     app:cardElevation="0dp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintHorizontal_bias="0.96"
+                    app:layout_constraintHorizontal_bias="0.98"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -137,29 +61,18 @@
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:paddingHorizontal="@dimen/_8sdp"
-                        android:paddingVertical="@dimen/_8sdp">
+                        android:padding="@dimen/_5sdp">
 
                         <ImageView
                             android:id="@+id/image"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:padding="@dimen/_5sdp"
-                            android:src="@drawable/ic_delete"
+                            android:src="@drawable/ic_settings"
                             app:layout_constraintLeft_toLeftOf="parent"
                             app:layout_constraintRight_toRightOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/delete_data"
-                            android:textColor="@color/textColor"
-                            android:textSize="@dimen/_9sdp"
-                            android:textStyle="normal"
-                            app:layout_constraintLeft_toLeftOf="@id/image"
-                            app:layout_constraintRight_toRightOf="@id/image"
-                            app:layout_constraintTop_toBottomOf="@id/image" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.cardview.widget.CardView>
 

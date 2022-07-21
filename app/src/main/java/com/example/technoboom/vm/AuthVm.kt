@@ -47,7 +47,7 @@ class AuthVm @Inject constructor(
             if (networkHelper.isNetworkConnected()){
                 try {
                     _authResponse.emit(ResponseState.Loading)
-                    val credentials: String = "Тест" + ":"
+                    val credentials: String = mySharedPreference.login + ":${mySharedPreference.password}"
                     val basic = "Basic " + Base64.getEncoder().encodeToString(credentials.toByteArray())
                     authRepository.authData(basic,authData)
                         .catch {data->

@@ -5,7 +5,9 @@ import android.content.SharedPreferences
 import com.example.technoboom.utils.AppConstant.COMPANYNAME
 import com.example.technoboom.utils.AppConstant.EMPTY_STRING
 import com.example.technoboom.utils.AppConstant.IMAGE_DATA
+import com.example.technoboom.utils.AppConstant.LOGIN
 import com.example.technoboom.utils.AppConstant.ORDER_NUMBER
+import com.example.technoboom.utils.AppConstant.PASSWORD
 import com.example.technoboom.utils.AppConstant.PINFL
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -61,85 +63,18 @@ class MySharedPreference @Inject constructor(@ApplicationContext private val con
         }
     }
 
-//    /** passwordApp **/
-//    var passwordApp: String?
-//        get() = preferences.getString(PASSWORDAPP, EMPTYTEXT)
-//        set(value) = preferences.edit {
-//            if (value != null) {
-//                it.putString(PASSWORDAPP, value)
-//            }
-//        }
-
-    /** passwordApp **/
-
-//    /** save accessToken **/
-//    var accessToken: String?
-//        get() = preferences.getString(ACCESSTOKEN, EMPTYTEXT)
-//        set(value) = preferences.edit {
-//            if (value != null) {
-//                it.putString(ACCESSTOKEN, value)
-//            }
-//        }
-//    /** save refreshToken **/
-//    var refreshToken: String?
-//        get() = preferences.getString(REFRESHTOKEN, EMPTYTEXT)
-//        set(value) = preferences.edit {
-//            if (value != null) {
-//                it.putString(REFRESHTOKEN, value)
-//            }
-//        }
-//    /** save tokenType **/
-//    var tokenType: String?
-//        get() = preferences.getString(TOKENTYPE, EMPTYTEXT)
-//        set(value) = preferences.edit {
-//            if (value != null) {
-//                it.putString(TOKENTYPE, value)
-//            }
-//        }
-//
-//    /** User Data **/
-//    var userData: String?
-//        get() = preferences.getString(USERDATA, EMPTYTEXT)
-//        set(value) = preferences.edit {
-//            if (value != null) {
-//                it.putString(USERDATA, value)
-//            }
-//        }
-//    /** User Data **/
-//
-//    /** User Data **/
-//    var oldToken: String?
-//        get() = preferences.getString(OLDTOKEN, EMPTYTEXT)
-//        set(value) = preferences.edit {
-//            if (value != null) {
-//                it.putString(OLDTOKEN, value)
-//            }
-//        }
-//    /** User Data **/
-//
-//
-//    var language: String?
-//        get() = preferences.getString(LANGUAGE, "uz")
-//        set(value) = preferences.edit {
-//            if (value != null) {
-//                it.putString(LANGUAGE, value)
-//            }
-//        }
-//
-//
-//    var theme: Boolean?
-//        get() = preferences.getBoolean(THEME, false)
-//        set(value) = preferences.edit {
-//            if (value != null) {
-//                it.putBoolean(THEME, value)
-//            }
-//        }
-//
-//
-//
-//    var theme_color: String?
-//        get() = preferences.getString(THEMECOLOR, EMPTYTEXT)
-//        set(value) = preferences.edit {
-//            if (value != null) { it.putString(THEMECOLOR, value) }
-//        }
+    var login:String?
+        get() = preferences.getString(LOGIN, EMPTY_STRING)
+        set(value) = preferences.edit{
+            if (value!=null){
+                it.putString(LOGIN,value)
+            }
+        }
+    var password:String?
+        get() = preferences.getString(PASSWORD, EMPTY_STRING)
+        set(value) = preferences.edit{
+            if (value!=null){
+                it.putString(PASSWORD,value)
+            }
+        }
 }

@@ -1,11 +1,11 @@
 <resources>
-    <string name="app_name">TechnoBoom</string>
+    <string name="app_name">Tehno Boon</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="again">Повторить попытку</string>
     <string name="error_server">Xatolik ro\'y berdi iltimos birozdan so\'ng urunib ko\'ring</string>
     <string name="no_internet">Internetga ulanish mavjud emas</string>
-    <string name="order_number">Порядковый номер</string>
+    <string name="order_number">Заказ нумбер</string>
     <string name="pinfl">Пинфл</string>
     <string name="save">Сохранять</string>
     <string name="send">Отправить</string>
@@ -31,4 +31,8 @@
     <string name="delete_data">Удалите</string>
     <string name="server_error">Есть проблема с сервером</string>
     <string name="delete_all_data">Позволить данным летать?</string>
+    <string name="password">Пароль</string>
+    <string name="no_login">Вход недоступен</string>
+    <string name="no_password">Пароль недоступен</string>
+    <string name="settings">Настройки</string>
 </resources>

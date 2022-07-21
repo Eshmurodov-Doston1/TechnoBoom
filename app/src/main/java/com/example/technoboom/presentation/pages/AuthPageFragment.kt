@@ -26,7 +26,6 @@ import javax.inject.Inject
 
 class AuthPageFragment : BaseFragment(R.layout.fragment_auth_page),UiController {
     private val binding:FragmentAuthPageBinding by viewBinding()
-    private val appCompositionRoot get() = (activity as MainActivity).appCompositionRoot
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {

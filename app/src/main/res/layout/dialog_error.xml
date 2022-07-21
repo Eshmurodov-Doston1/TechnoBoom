@@ -63,7 +63,7 @@
             app:layout_constraintWidth_percent="0.8"
             tools:text="kdmffkgfjkgndfjkgndfjkgndfjkfndjkgnjfdkgnngjnjdfkn" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_confirm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

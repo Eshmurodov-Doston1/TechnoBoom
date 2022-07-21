@@ -18,6 +18,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
 import com.example.technoboom.BuildConfig
 import com.example.technoboom.MainActivity
 import com.example.technoboom.R
@@ -48,8 +49,6 @@ import kotlin.collections.ArrayList
 class MainFragment : BaseFragment(R.layout.fragment_main) {
     private val binding:FragmentMainBinding by viewBinding()
     private lateinit var listData:ArrayList<Data>
-    private val appCompositionRoot get() = (activity as MainActivity).appCompositionRoot
-    private val authVm:AuthVm by viewModels()
     private lateinit var photoURI: Uri
     private lateinit var imagePath:String
     private lateinit var imageAdapter: ImageAdapter
@@ -61,52 +60,61 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
     private var categoryText:String?=null
     private lateinit var resultLauncher: ActivityResultLauncher<Intent>
     private lateinit var listDataRv:ArrayList<com.example.technoboom.models.files.Data>
+    private lateinit var liveDataList:MutableLiveData<List<com.example.technoboom.models.files.Data>>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         listData = ArrayList()
+        listDataRv = ArrayList()
+        liveDataList = MutableLiveData()
         gson = Gson()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
-           mainViewCreated()
+            getFiles()
             dataBaseDataEmptyOrNull()
-            pinfl.doAfterTextChanged {
-                if (it.toString().isNotNullOrEmpty()){
-                    buttonSave.enabledTrue()
-                }
+
+            liveDataList.observe(appCompositionRoot.mLifecycleOwner){
+                imageAdapter = ImageAdapter(it as ArrayList<com.example.technoboom.models.files.Data>,object:ImageAdapter.OnItemClickListener{
+                    override fun onItemClick(uri: com.example.technoboom.models.files.Data, position: Int) {
+
+                    }
+                })
+                rv.adapter = imageAdapter
             }
 
-
-            resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult(),object:ActivityResultCallback<ActivityResult>{
-                override fun onActivityResult(result: ActivityResult?) {
-                    val data = result?.data
-                    if (data!=null){
-                        val data1 = data.data
-                        var openInputStream =(activity)?.contentResolver?.openInputStream(data1!!)
-                        var filesDir = (activity)?.filesDir
-                        var format = SimpleDateFormat(DATE_FORMAT,Locale.getDefault()).format(Date())
-                        var file = File(filesDir,"$format$PDF_FORMAT")
-                        val fileOutputStream = FileOutputStream(file)
-                        openInputStream!!.copyTo(fileOutputStream)
-                        openInputStream.close()
-                        fileOutputStream.close()
-                        var filAbsolutePath = file.absolutePath
-                        imagePath = filAbsolutePath
-                        launch {
-                            if (isUpdate){
-                                imageEntity?.imagePath = file.absolutePath
-                                authVm.updateImageEntity(imageEntity!!)
-                                imageAdapter.notifyItemChanged(updatePosition)
-                            }else{
-                                authVm.saveImageEntity(ImageEntity(imagePath = filAbsolutePath,categoryImage = categoryText.toString()))
-                                dataBaseDataEmptyOrNull()
-                            }
+            resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                val data = result?.data
+                if (data != null) {
+                    val data1 = data.data
+                    var openInputStream = (activity)?.contentResolver?.openInputStream(data1!!)
+                    var filesDir = (activity)?.filesDir
+                    var format = SimpleDateFormat(DATE_FORMAT, Locale.getDefault()).format(Date())
+                    var file = File(filesDir, "$format$PDF_FORMAT")
+                    val fileOutputStream = FileOutputStream(file)
+                    openInputStream!!.copyTo(fileOutputStream)
+                    openInputStream.close()
+                    fileOutputStream.close()
+                    var filAbsolutePath = file.absolutePath
+                    imagePath = filAbsolutePath
+                    launch {
+                        if (isUpdate) {
+                            imageEntity?.imagePath = file.absolutePath
+                            authVm.updateImageEntity(imageEntity!!)
+                            imageAdapter.notifyItemChanged(updatePosition)
+                        } else {
+                            authVm.saveImageEntity(
+                                ImageEntity(
+                                    imagePath = filAbsolutePath,
+                                    categoryImage = categoryText.toString()
+                                )
+                            )
+                            dataBaseDataEmptyOrNull()
                         }
                     }
                 }
-            })
+            }
 
             sendButton.setOnClickListener {
                 authVm.getAllList().forEach {
@@ -120,34 +128,12 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
                       if (resUpload!=null && resUpload.Success){
                           launch {
                               authVm.deleteAllDataTableImage()
-                              mainViewCreated()
+                              getFiles()
                               clearMyFiles()
                           }
                       }
                   }
               }
-            }
-
-            buttonSave.setOnClickListener {
-                val pinfl = pinfl.text.toString().trim()
-                val orderNumber = orderNumber.text.toString().trim()
-                if (pinfl.isNotNullOrEmpty() && orderNumber.isNotNullOrEmpty()){
-                    val savePinflAndOrderNumber = authVm.savePinflAndOrderNumber(pinfl, orderNumber)
-                    if (savePinflAndOrderNumber){
-                        linear.gone()
-                        val loadAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.anim_view)
-                        coordinator.visible()
-                        coordinator.animation = loadAnimation
-                        getFiles()
-                    }
-                }else{
-                    appCompositionRoot.errorDialog(
-                        appCompositionRoot.mActivity.getString(R.string.error_input),
-                        appCompositionRoot.mActivity.getString(R.string.empty_pinfl_or_order_number),
-                        -2){
-                    // TODO: Clicked button dialog
-                    }
-                }
             }
 
             uploadBtn.setOnClickListener {
@@ -156,41 +142,14 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
             }
 
 
-
-
-            clearCard.setOnClickListener {
-                appCompositionRoot.deleteDialog(2){
-                    if (it) {
-                        launch {
-                            authVm.sharedPreference.clear()
-                            authVm.deleteAllDataTableImage()
-                            clearMyFiles()
-                            mainViewCreated()
-                        }
-                    }
-                }
+            settingsCard?.setOnClickListener {
+                appCompositionRoot.screenNavigator.createSettings()
             }
-
-
-        }
-    }
-
-    private fun mainViewCreated() {
-        binding.apply {
-                if (authVm.sharedPreference.orderNumber.isNotNullOrEmpty()){
-                    getFiles()
-                    coordinator.visible()
-                    linear.gone()
-                }else{
-                    coordinator.gone()
-                    linear.visible()
-                }
         }
     }
 
 
     fun getFiles(){
-        listDataRv = ArrayList()
             binding.apply {
                 launch {
                     val pinfl = authVm.sharedPreference.pinfl.toString()
@@ -198,13 +157,7 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
                         authVm.getFiles(SendData(pinfl,orderNumber))
                         authVm.files.fetchResult(appCompositionRoot.uiControllerApp){ result->
                             listDataRv = result?.Data as ArrayList<com.example.technoboom.models.files.Data>
-                            imageAdapter = ImageAdapter(listDataRv,object:ImageAdapter.OnItemClickListener{
-                                override fun onItemClick(data: com.example.technoboom.models.files.Data, position: Int) {
-
-                                }
-                            })
-                            imageAdapter.listData = listDataRv
-                            rv.adapter = imageAdapter
+                            liveDataList.postValue(listDataRv)
                         }
                 }
 
@@ -216,15 +169,10 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
                                 it.imagePath.substring(it.imagePath.length-3),
                                 it.categoryImage, isSend = false))
                             imageAdapter.notifyDataSetChanged()
+                            liveDataList.postValue(listDataRv)
                         }
                     }
                 }
-
-
-
-
-
-
             }
     }
 

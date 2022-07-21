@@ -7,7 +7,7 @@ import androidx.room.Query
 import com.example.technoboom.dataBase.entity.AuthEntity
 
 @Dao
-interface AuthDao:BaseDao<AuthEntity> {
+interface AuthDao{
     @Query("SELECT*FROM authentity")
     fun getAuth():AuthEntity
 }

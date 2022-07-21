@@ -13,6 +13,7 @@ import retrofit2.HttpException
 import retrofit2.Response
 import retrofit2.Retrofit
 import java.io.IOException
+import java.net.ConnectException
 import java.util.concurrent.TimeoutException
 import javax.inject.Inject
 
@@ -36,8 +37,9 @@ interface ResponseFetcher {
                     ResponseState.Error(e.hashCode(), e.message)
                 }catch (e:TimeoutException){
                     ResponseState.Error(e.hashCode(), e.message)
-                }
-                catch (e: Exception) {
+                }catch (e:ConnectException){
+                    ResponseState.Error(e.hashCode(), e.message)
+                } catch (e: Exception) {
                     ResponseState.Error(e.hashCode(), e.message)
                 }
                 emit(flow)

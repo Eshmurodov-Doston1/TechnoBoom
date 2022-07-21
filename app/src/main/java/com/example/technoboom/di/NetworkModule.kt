@@ -33,7 +33,7 @@ class NetworkModule {
     fun provideOkHttpClient(): OkHttpClient {
 
        var okHttpClient = OkHttpClient.Builder()
-            .connectTimeout(10000, TimeUnit.SECONDS)
+            .connectTimeout(20000, TimeUnit.SECONDS)
             .readTimeout(10000, TimeUnit.SECONDS)
 
 
